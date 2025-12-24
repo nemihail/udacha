@@ -66,7 +66,12 @@ void relay_proc(bool hall_move, bool live_move, bool temp, bool humid, bool ligh
   if(temp && live_move){digitalWrite(fan_relay_pin, 1);}else{digitalWrite(fan_relay_pin, 0);} // вентилятор если жарко и в комнате кто-то есть
   if(humid){digitalWrite(humid_relay_pin, 1);}else{digitalWrite(humid_relay_pin, 0);} // увлажнитель в комнате если влажно
   if(light){digitalWrite(light_relay_pin, 1);}else{digitalWrite(light_relay_pin, 1);} // свет в комнате
-  // остался только чайник. еще надо написать меню для лсд, обработку времени, и (несложно) света.
+  if(hall_move){
+    digitalWrite(kettle_relay_pin, 1);
+    delay(60000); // one minute delay to boil the water
+    digitalWrite(kettle_relay_pin, 0);
+  }else{digitalWrite(kettle_relay_pin, 0);}
 }
+
 
 
