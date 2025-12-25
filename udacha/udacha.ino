@@ -1,3 +1,4 @@
+
 #include <TimeLib.h>
 #include <Wire.h>                    
 #include <LiquidCrystal_I2C.h>        
@@ -19,7 +20,14 @@
 DHT mydht(temphum_pin, DHT11); 
 LiquidCrystal_I2C lcd(0x27,20,4);
 
+short t;
+short h;
+
 bool temp, humid; // need to make situation better? or not?
+
+#define nowhour 12
+#define nowminute 34 // enter here current values
+#define nowsecond 56
 
 void setup() {
   pinMode(light_relay_pin, OUTPUT);
@@ -32,7 +40,7 @@ void setup() {
                   
   Serial.begin(9600);
   
-  setTime(8, 20, 0, 2419, 12, 2025); // 12 января 2024, 14:30:45
+  setTime(nowhour, nowminute, nowsecond);
   
   dht.begin();
 }
@@ -41,7 +49,8 @@ void loop() {
   temphum_proc();
   relay_proc(digitalRead(hall_move_pin),
              digitalRead(room_move_pin),
-             temp, humid, digitalRead(light_pin));
+             digitalRead(light_pin),
+             temp, humid);
   lcdproc();
 }
 
@@ -64,8 +73,8 @@ void lcdproc(){
 }
 
 void temphum_proc(){
-  short t = dht.readTemperature();
-  short h = dht.readHumidity();
+  t = dht.readTemperature();
+  h = dht.readHumidity();
   if (isnan(h) || isnan(t)) {  
     Serial.println("Ошибка считывания");
   }
@@ -73,7 +82,7 @@ void temphum_proc(){
   if(h < 35){humid = 1;}else{humid = 0;}
 }
 
-void relay_proc(bool hall_move, bool live_move, bool temp, bool humid, bool light){
+void relay_proc(bool hall_move, bool live_move, bool live_light bool temp, bool humid){
   if(temp && live_move){
     digitalWrite(fan_relay_pin, 1);
   }else{
@@ -84,7 +93,7 @@ void relay_proc(bool hall_move, bool live_move, bool temp, bool humid, bool ligh
   }else{
     digitalWrite(humid_relay_pin, 0);
   }
-  if(light && live_move){
+  if(live_light && live_move){
     digitalWrite(light_relay_pin, 1);
   }else{
     digitalWrite(light_relay_pin, 0);
