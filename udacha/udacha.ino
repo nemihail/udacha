@@ -17,7 +17,7 @@
 
 #define light_pin A2
 
-DHT mydht(temphum_pin, DHT11); 
+DHT dht(temphum_pin, DHT11); 
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 short t;
@@ -40,7 +40,7 @@ void setup() {
                   
   Serial.begin(9600);
   
-  setTime(nowhour, nowminute, nowsecond);
+  setTime(nowhour, nowminute, nowsecond, 26, 12, 2025);
   
   dht.begin();
 }
@@ -82,7 +82,7 @@ void temphum_proc(){
   if(h < 35){humid = 1;}else{humid = 0;}
 }
 
-void relay_proc(bool hall_move, bool live_move, bool live_light bool temp, bool humid){
+void relay_proc(bool hall_move, bool live_move, bool live_light, bool temp, bool humid){
   if(temp && live_move){
     digitalWrite(fan_relay_pin, 1);
   }else{
@@ -106,3 +106,4 @@ void relay_proc(bool hall_move, bool live_move, bool live_light bool temp, bool 
     digitalWrite(kettle_relay_pin, 0);
   }
 }
+
